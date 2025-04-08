@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Status Checker - Jai & Kishor</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 40px; }
+    .user { margin: 20px auto; padding: 20px; max-width: 300px; border-radius: 10px; box-shadow: 0 0 10px gray; }
+    .status { font-size: 20px; padding: 10px; border-radius: 5px; color: white; }
+    .online { background-color: green; }
+    .offline { background-color: red; }
+    button { margin-top: 10px; padding: 10px 20px; font-size: 16px; border-radius: 5px; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>Jai & Kishor Online Status</h1>
+
+  <div class="user">
+    <h2>Jai</h2>
+    <div id="jaiStatus" class="status">Loading...</div>
+    <button onclick="setOnline('jai')">Go Online</button>
+    <button onclick="setOffline('jai')">Go Offline</button>
+  </div>
+
+  <div class="user">
+    <h2>Kishor</h2>
+    <div id="kishorStatus" class="status">Loading...</div>
+    <button onclick="setOnline('kishor')">Go Online</button>
+    <button onclick="setOffline('kishor')">Go Offline</button>
+  </div>
+
+  <script>
+    // Firebase config — replace with your actual config
+    const firebaseConfig = {
+      apiKey: "AIzaSyANx25S5swV98reeFTiITmz2QqBekQp2DM",
+      authDomain: "online-status-7ae12.firebaseapp.com",
+      databaseURL: "https://online-status-7ae12-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "online-status-7ae12",
+      storageBucket: "online-status-7ae12.firebasestorage.app",
+      messagingSenderId: "292889856242",
+      appId: "1:292889856242:web:bcc997c061f3cf4487a86b"
+      appId: "1:292889856242:web:bcc997c061f3cf4487a86b"
+      appId: "1:292889856242:web:bcc997c061f3cf4487a86b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function updateStatus(user, status) {
+      db.ref('status').update({
+        [user]: status,
+        [user === 'jai' ? 'kishor' : 'jai']: 'Offline' // Only one online
+      });
+    }
+
+    function setOnline(user) {
+      updateStatus(user, 'Online');
+    }
+
+    function setOffline(user) {
+      updateStatus(user, 'Offline');
+    }
+
+    function updateUI(user, status) {
+      const div = document.getElementById(user + 'Status');
+      div.textContent = status;
+      div.className = 'status ' + (status === 'Online' ? 'online' : 'offline');
+    }
+
+    db.ref('status').on('value', snapshot => {
+      const data = snapshot.val();
+      if (data) {
+        updateUI('jai', data.jai || 'Offline');
+        updateUI('kishor', data.kishor || 'Offline');
+      }
+    });
+  </script>
+
+</body>
+</html>
